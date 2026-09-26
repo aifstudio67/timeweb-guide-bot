@@ -16,14 +16,22 @@ const bot = createGuideBot({ config, repository });
 const app = express();
 
 app.disable("x-powered-by");
-app.get("/health", (_request, response) => {
+function health(_request, response) {
   response.status(200).json({ status: "ok" });
-});
+}
+
+// /health is configured in Timeweb. / also keeps the process healthy if its
+// default root-path check is used instead.
+app.get("/health", health);
+app.get("/", health);
 
 const server = app.listen(config.port, "0.0.0.0", () => {
   console.log(`Health endpoint listening on port ${config.port}`);
-  bot.start({
+  void bot.start({
     onStart: (botInfo) => console.log(`Bot @${botInfo.username} started`),
+  }).catch((error) => {
+    console.error("Telegram bot failed to start", error);
+    shutdown("Bot startup failure");
   });
 });
 
