@@ -1,0 +1,22 @@
+{
+  "name": "timeweb-guide-bot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Telegram bot that verifies channel membership and delivers a Timeweb Cloud guide.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test",
+    "check": "node --check src/server.js && node --check src/bot.js && node --check src/database.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "grammy": "^1.39.1",
+    "pg": "^8.16.3"
+  }
+}
