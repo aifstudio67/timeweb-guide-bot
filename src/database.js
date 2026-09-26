@@ -2,6 +2,16 @@ import pg from "pg";
 
 const { Pool } = pg;
 
+function connectionStringWithoutSslOptions(databaseUrl) {
+  const url = new URL(databaseUrl);
+
+  for (const option of ["sslmode", "sslcert", "sslkey", "sslrootcert"]) {
+    url.searchParams.delete(option);
+  }
+
+  return url.toString();
+}
+
 function userValues(user) {
   return [
     String(user.id),
@@ -13,7 +23,9 @@ function userValues(user) {
 
 export function createLeadRepository({ databaseUrl, databaseSsl }) {
   const pool = new Pool({
-    connectionString: databaseUrl,
+    // Timeweb gives a libpq URL containing sslmode=verify-full. In node-postgres
+    // that query parameter overrides this ssl object and fails on its private CA.
+    connectionString: connectionStringWithoutSslOptions(databaseUrl),
     ssl: databaseSsl ? { rejectUnauthorized: false } : undefined,
   });
 
